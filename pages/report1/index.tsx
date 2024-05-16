@@ -2,7 +2,7 @@ import { media } from '@/const'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 import { styled } from 'styled-components'
-import ThreeApp from './main'
+import { ThreeApp } from '@/components/report1/ThreeApp'
 
 export default function Page() {
   const wrapperRef = useRef<HTMLDivElement>(null)

@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
-export default class ThreeApp {
+export class ThreeApp {
   static CAMERA_PARAM = {
     // fovy は Field of View Y のことで、縦方向の視野角を意味する
     fovy: 60,
