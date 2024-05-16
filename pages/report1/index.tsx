@@ -66,6 +66,7 @@ const Img = styled.img`
   bottom: 4rem;
   right: 4rem;
   width: 80rem;
+  pointer-events: none;
 
   ${media.mobile} {
     bottom: 0.8rem;
