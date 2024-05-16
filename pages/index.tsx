@@ -1,3 +1,4 @@
+import { Icon, SourceLinkButton } from '@/components/common'
 import { media } from '@/const'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -16,6 +17,18 @@ export default function Home() {
           <List>
             <NavItem href='/report1'>&gt; REPORT 1</NavItem>
           </List>
+          <ButtonArea>
+            <SourceLinkButton
+              href={
+                'https://github.com/matsurai25/webgl-school-2024/'
+              }
+              target={'_blank'}
+              rel='noopener noreferrer'
+            >
+              <Icon src={'/icon-github.svg'} />
+              GitHub
+            </SourceLinkButton>
+          </ButtonArea>
         </Inner>
       </Wrapper>
     </>
@@ -67,4 +80,10 @@ const NavItem = styled(Link)`
   ${media.mobile} {
     font-size: 1.6rem;
   }
+`
+
+const ButtonArea = styled.div`
+  margin-top: 4rem;
+  display: flex;
+  justify-content: flex-start;
 `

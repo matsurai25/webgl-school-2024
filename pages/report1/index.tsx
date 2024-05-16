@@ -1,8 +1,14 @@
 import { media } from '@/const'
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
-import { styled } from 'styled-components'
+import { css, styled } from 'styled-components'
 import { ThreeApp } from '@/components/report1/ThreeApp'
+import {
+  Icon,
+  LinkArea,
+  LinkButton,
+  SourceLinkButton
+} from '@/components/common'
 
 export default function Page() {
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -21,7 +27,22 @@ export default function Page() {
 
   return (
     <Wrapper ref={wrapperRef}>
-      <BackLink href={'/'}>BACK</BackLink>
+      <LinkArea>
+        <LinkButton href={'/'}>
+          <Icon src={'/icon-back.svg'} />
+          BACK
+        </LinkButton>
+        <SourceLinkButton
+          href={
+            'https://github.com/matsurai25/webgl-school-2024/blob/main/components/report1/ThreeApp.ts'
+          }
+          target={'_blank'}
+          rel='noopener noreferrer'
+        >
+          <Icon src={'/icon-github.svg'} />
+          GitHub
+        </SourceLinkButton>
+      </LinkArea>
       <Img src={'/report1.svg'} />
       <Overlay />
     </Wrapper>
@@ -37,28 +58,6 @@ const Wrapper = styled.div`
     &.intersecting {
       cursor: pointer;
     }
-  }
-`
-
-const BackLink = styled(Link)`
-  color: #fff;
-  text-decoration: none;
-  position: fixed;
-  top: 2rem;
-  left: 2rem;
-  z-index: 1;
-  font-size: 1.6rem;
-  background-color: #000000;
-  z-index: 100;
-  padding: 1.2rem 4rem;
-  border-radius: 4rem;
-
-  ${media.mobile} {
-    top: 1.6rem;
-    left: 1.6rem;
-    font-size: 1.2rem;
-    padding: 0.8rem 2rem;
-    border-radius: 4rem;
   }
 `
 
