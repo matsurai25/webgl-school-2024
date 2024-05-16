@@ -3,30 +3,26 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js'
 
 export class ThreeApp {
   static CAMERA_PARAM = {
-    // fovy は Field of View Y のことで、縦方向の視野角を意味する
     fovy: 60,
-    // 描画する空間のニアクリップ面（最近面）
     near: 0.1,
-    // 描画する空間のファークリップ面（最遠面）
     far: 100.0,
-    // カメラの座標
     position: new THREE.Vector3(
       -2.387185024655694,
       3.0,
       -0.4343859748540797
     ),
-    // カメラの注視点
     lookAt: new THREE.Vector3(1, 0, 1.5)
   }
   static RENDERER_PARAM = {
-    clearColor: 0x0000dd // 画面をクリアする色
+    clearColor: 0x0000dd
   }
+
   /**
    * 平行光源定義のための定数
    */
   static DIRECTIONAL_LIGHT_PARAM = {
-    color: 0xffffff, // 光の色
-    intensity: 5.0, // 光の強度
+    color: 0xffffff,
+    intensity: 5.0,
     position: new THREE.Vector3(1.0, 1.0, 1.0) // 光の向き
   }
   /**
@@ -68,6 +64,8 @@ export class ThreeApp {
 
   constructor(wrapper: HTMLDivElement) {
     this.wrapper = wrapper
+    this.mousePos = null
+
     // レンダラー
     const color = new THREE.Color(
       ThreeApp.RENDERER_PARAM.clearColor
@@ -147,7 +145,7 @@ export class ThreeApp {
     this.plane.position.y = 0
     this.scene.add(this.plane)
 
-    // 共通のジオメトリ、マテリアルから、複数のメッシュインスタンスを作成する @@@
+    // boxを追加
     const boxCount = 500
     const paging = 20
     const transformScale = 1.0
@@ -158,9 +156,9 @@ export class ThreeApp {
     for (let i = 0; i < boxCount; ++i) {
       const box = new THREE.Mesh(
         this.boxGeometry,
-        this.material.clone()
+        this.material.clone() // 後で色を変えるので、クローンを作成
       )
-      // 座標をpaging x pagingのグリッド状に配置する
+
       box.position.x =
         (i % paging) * gridGap * transformScale
       box.position.y = -0.26
@@ -184,13 +182,16 @@ export class ThreeApp {
       })
     }
 
+    // 1秒後に全ての箱のy座標を変更し始める
     window.setTimeout(() => {
       this.setRandomYChange()
     }, 1000)
 
-    window.addEventListener('resize', this.handleResize)
+    // 10秒ごとに全ての箱を回転させる
+    window.setInterval(this.rotateAllBoxes, 10000)
 
-    this.mousePos = null
+    // イベントリスナーを登録
+    window.addEventListener('resize', this.handleResize)
     window.addEventListener(
       'mousemove',
       this.handleMouseMove
@@ -200,12 +201,9 @@ export class ThreeApp {
     })
     window.addEventListener('click', this.handleClick)
     window.addEventListener('keypress', this.handleKeyPress)
-
-    // 10秒ごとに全ての箱を回転させる
-    window.setInterval(this.rotateAllBoxes, 10000)
   }
 
-  getWrapperAspectRatio() {
+  getWrapperAspectRatio = () => {
     return (
       this.wrapper.clientWidth / this.wrapper.clientHeight
     )
@@ -254,6 +252,7 @@ export class ThreeApp {
       }
 
       // マウスポインタが交差しているかどうかで、カーソルの形状を変える
+      // クラスを付けることで、CSSでスタイルを変更する
       if (intersects.length > 0) {
         this.renderer.domElement.classList.add(
           'intersecting'
@@ -318,7 +317,7 @@ export class ThreeApp {
   }
 
   rotateAllBoxes = () => {
-    // 全てのwillChangeBoxに対して、x軸回転を変更する指令を出す
+    // 全てのwillChangeBoxに対して、時間差でx軸回転を変更する指令を出す
     let i = 0
     for (const willChangeBox of this.willChangeBoxes) {
       window.setTimeout(() => {
@@ -356,7 +355,7 @@ export class ThreeApp {
     this.renderer.render(this.scene, this.camera)
   }
 
-  updateWillChangeBoxes() {
+  updateWillChangeBoxes = () => {
     // willChangeBoxesの情報を元に、boxesを変更する
     for (const willChangeBox of this.willChangeBoxes) {
       const targetBox = this.boxes.find(
@@ -365,7 +364,9 @@ export class ThreeApp {
       if (targetBox === undefined) {
         continue
       }
+
       // 現在のマテリアルの色が、willChangeBoxの色と異なる場合は変更する
+      // 小数点以下で違うから、ここの比較は意味ないかも？
       if (
         targetBox.material.color.getHex() !==
         willChangeBox.color
@@ -373,22 +374,21 @@ export class ThreeApp {
         // イージングを使って、ゆっくり変化させる
         const diffColor = new THREE.Color(
           willChangeBox.color
-        ) // ここでエラーが出る
+        )
         targetBox.material.color.r +=
           (diffColor.r - targetBox.material.color.r) * 0.2
         targetBox.material.color.g +=
           (diffColor.g - targetBox.material.color.g) * 0.2
         targetBox.material.color.b +=
           (diffColor.b - targetBox.material.color.b) * 0.2
-        // targetBox.material.color.setHex(willChangeBox.color)
       }
 
-      // 現在のy座標が、willChangeBoxのy座標と異なる場合は変更する
+      // 現在のy座標を、willChangeBoxのy座標へと変更する
       // イージングを使って、ゆっくり変化させる
       const diffY = willChangeBox.y - targetBox.position.y
       targetBox.position.y += diffY * 0.02
 
-      // 現在のx軸回転が、willChangeBoxのx軸回転と異なる場合は変更する
+      // 現在のx回転を、willChangeBoxのx回転へと変更する
       // イージングを使って、ゆっくり変化させる
       const diffRotationX =
         willChangeBox.rotationX - targetBox.rotation.x
