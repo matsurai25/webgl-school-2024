@@ -9,6 +9,9 @@ export default function App({
 }: AppProps) {
   return (
     <>
+      <style>
+        {`html {background:#FFFFFF} body {opacity:0}`}
+      </style>
       <GlobalStyles />
       <Component {...pageProps} />
     </>
@@ -18,6 +21,7 @@ export default function App({
 const GlobalStyles = createGlobalStyle`
   html,
   body {
+    opacity: 1 !important;
     font-size: max(min(calc(100vw / 1440 * 10), 10px), calc(100vw / 1920 * 10));
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 400;
